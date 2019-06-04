@@ -1,9 +1,8 @@
 module Haversine
   class Point < Struct.new(:lat, :lon)
-    RADIAN = Math::PI/180
-
     def self.from_degrees(lat_deg, lon_deg)
-      new(lat_deg * RADIAN, lon_deg * RADIAN)
+      radian = Math::PI/180
+      new(lat_deg * radian, lon_deg * radian)
     end
   end
 end
