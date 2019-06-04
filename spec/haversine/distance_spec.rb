@@ -4,7 +4,6 @@ require "haversine/distance"
 
 RSpec.describe ::Haversine::Distance do
   describe ".between_points" do
-    subject { described_class.between_points(point_a, point_b) }
     context "from A to A" do
       let(:lat_deg) { 51.4934 }
       let(:lon_deg) { 0.0098 }
@@ -12,7 +11,7 @@ RSpec.describe ::Haversine::Distance do
       let(:point_b) { point_a }
 
       specify do
-        expect(subject).to eq(0.0)
+        expect(described_class.between_points(point_a, point_b)).to eq(0.0)
       end
     end
 
@@ -23,7 +22,8 @@ RSpec.describe ::Haversine::Distance do
       let(:point_b) { ::Haversine::Point.from_degrees(53.350140, -6.266155) }
 
       specify do
-        expect(subject).to eq(473_323.04312719754) # ~ 473 km
+        expect(described_class.between_points(point_a, point_b)).to eq(473_323.04312719754) # ~ 473 km
+        expect(described_class.between_points(point_b, point_a)).to eq(473_323.04312719754) # ~ 473 km
       end
     end
   end
