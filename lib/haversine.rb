@@ -1,5 +1,5 @@
 require "haversine/version"
+require "haversine/point"
 
 module Haversine
-  # Your code goes here...
 end
