@@ -1,38 +1,66 @@
 # Haversine
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/haversine`. To experiment with that code, run `bin/console` for an interactive prompt.
+## Development
 
-TODO: Delete this and the text above, and describe your gem
+This code does not have any external runtime dependencies and should work with any modern Ruby (2.x).
 
-## Installation
+After cloning the repo run:
 
-Add this line to your application's Gemfile:
-
-```ruby
-gem 'haversine'
+```
+bundle install
 ```
 
-And then execute:
+To execute tests simply run:
 
-    $ bundle
+```
+bundle exec rspec
+```
 
-Or install it yourself as:
+### Mutation testing
 
-    $ gem install haversine
+At the moment mutation coverage of `Haversine` module is 99.40%. That's because
+Haversine formula uses a squared value of sinus function so this mutation is
+a bit tricky to eliminate:
+
+```
+Haversine::Distance.between_points: ./lib/haversine/distance.rb:6
+- rspec:1:./spec/haversine/distance_spec.rb:13/Haversine::Distance.between_points from A to A
+- rspec:2:./spec/haversine/distance_spec.rb:24/Haversine::Distance.between_points from A to B
+evil:Haversine::Distance.between_points:/Users/rafal.szalanski/Developer/haversine/lib/haversine/distance.rb:6:0ec1d
+@@ -1,7 +1,7 @@
+ def self.between_points(point_a, point_b)
+   d_lat = (point_b.lat - point_a.lat)
+   d_lon = (point_b.lon - point_a.lon)
+-  val = ((Math.sin(d_lat / 2) ** 2) + ((Math.cos(point_a.lat) * Math.cos(point_b.lat)) * (Math.sin(d_lon / 2) ** 2)))
++  val = ((Math.sin(d_lat / (-2)) ** 2) + ((Math.cos(point_a.lat) * Math.cos(point_b.lat)) * (Math.sin(d_lon / 2) ** 2)))
+   (2 * RADIUS) * Math.asin(Math.sqrt(val))
+ end
+-----------------------
+evil:Haversine::Distance.between_points: ./haversine/lib/haversine/distance.rb:6:c0861
+@@ -1,7 +1,7 @@
+ def self.between_points(point_a, point_b)
+   d_lat = (point_b.lat - point_a.lat)
+   d_lon = (point_b.lon - point_a.lon)
+-  val = ((Math.sin(d_lat / 2) ** 2) + ((Math.cos(point_a.lat) * Math.cos(point_b.lat)) * (Math.sin(d_lon / 2) ** 2)))
++  val = ((Math.sin(d_lat / 2) ** 2) + ((Math.cos(point_a.lat) * Math.cos(point_b.lat)) * (Math.sin(d_lon / (-2)) ** 2)))
+   (2 * RADIUS) * Math.asin(Math.sqrt(val))
+ end
+-----------------------
+```
+
+To execute mutation tests for `Haversine` module simply run:
+
+```
+bundle exec mutant --include lib --require haversine --use rspec "Haversine*"
+```
 
 ## Usage
 
-TODO: Write usage instructions here
+To execute program run:
 
-## Development
-
-After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
-
-To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
-
-## Contributing
-
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/haversine.
+```
+bundle exec ruby run.rb --input <path to input file> --output <path to output file>
+```
 
 ## License
 
